@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carregador Solar Portátil — Tech Brasil</title>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/2.12.0/tsparticles.bundle.min.js"></script>
+
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --blue: #0A84FF;
+    --blue-dark: #0060CC;
+    --blue-glow: rgba(10, 132, 255, 0.35);
+    --bg: #030507;
+    --surface: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.06);
+    --text: #e8eaf0;
+    --muted: #8a9ab5;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', Arial, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+      radial-gradient(ellipse 80% 40% at 20% 30%, rgba(10, 132, 255, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 50% at 80% 60%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse 70% 45% at 50% 10%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+    background-size: 200% 200%;
+    animation: aurora 15s ease-in-out infinite;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  @keyframes aurora {
+    0% {
+      background-position: 0% 0%, 100% 100%, 50% 50%;
+    }
+    25% {
+      background-position: 50% 50%, 0% 100%, 100% 0%;
+    }
+    50% {
+      background-position: 100% 0%, 50% 50%, 0% 100%;
+    }
+    75% {
+      background-position: 50% 100%, 100% 0%, 50% 50%;
+    }
+    100% {
+      background-position: 0% 0%, 100% 100%, 50% 50%;
+    }
+  }
+
+  #particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  main {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #020304; }
+  ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 3px; }
+
+  /* ─── HEADER ─── */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 48px;
+    z-index: 1000;
+    background: rgba(3, 5, 7, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--blue);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .logo-text span { color: var(--blue); }
+
+  nav { display: flex; align-items: center; gap: 8px; }
+
+  nav a {
+    padding: 8px 16px;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  nav a:hover { color: #fff; background: var(--surface); }
+
+  nav .btn-nav {
+    background: var(--blue);
+    color: #fff;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  nav .btn-nav:hover { background: var(--blue-dark); transform: scale(1.04); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 120px 48px 80px;
+    background:
+      radial-gradient(ellipse 70% 60% at 70% 50%, rgba(10,132,255,0.12), transparent),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(10,132,255,0.07), transparent);
+    gap: 40px;
+  }
+
+  .hero-text { max-width: 520px; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(10,132,255,0.15);
+    border: 1px solid rgba(10,132,255,0.35);
+    color: var(--blue);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  .hero h2 {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 18px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero h2 span { color: var(--blue); }
+
+  .hero p {
+    font-size: 17px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    max-width: 420px;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .price-block { margin-bottom: 28px; }
+
+  .price-label {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .price {
+    font-size: 42px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .price sup {
+    font-size: 22px;
+    font-weight: 700;
+    vertical-align: super;
+    color: var(--blue);
+  }
+
+  .price-installment {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ─── BOTÕES ─── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue);
+    color: #fff;
+    padding: 15px 32px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+
+  .btn:hover {
+    background: var(--blue-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--blue-glow);
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-outline:hover { border-color: var(--blue); color: #fff; }
+
+  /* ─── HERO IMAGE ─── */
+  .hero-image-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .hero-image-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    border-radius: 30px;
+    background: radial-gradient(circle, var(--blue-glow), transparent 70%);
+    z-index: 0;
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+
+  .hero img {
+    position: relative;
+    z-index: 1;
+    width: 380px;
+    max-width: 100%;
+    border-radius: 24px;
+    box-shadow: 0 0 60px rgba(10,132,255,0.4);
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-18px); }
+  }
+
+  /* Cronometro */
+  .countdown {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--blue);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+  }
+
+  /* Botao Flutuante */
+  .floating-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: var(--blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(10, 132, 255, 0.4);
+    animation: pulse-float 2s ease-in-out infinite;
+    z-index: 999;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+
+  .floating-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 32px rgba(10, 132, 255, 0.6);
+  }
+
+  @keyframes pulse-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* Sistema de Abas */
+  .tabs-container {
+    margin-bottom: 60px;
+  }
+
+  .tabs-nav {
+    display: flex;
+    gap: 12px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 40px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+  }
+
+  .tab-btn {
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .tab-btn:hover {
+    color: var(--text);
+  }
+
+  .tab-btn.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+  }
+
+  .tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── STATS BAR ─── */
+  .stats-bar {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 48px;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--blue);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ─── SEÇÕES ─── */
+  section {
+    padding: 100px 48px;
+    text-align: center;
+  }
+
+  .section-label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+
+  section h2 {
+    font-size: clamp(26px, 4vw, 40px);
+    font-weight: 800;
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+  }
+
+  section .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 520px;
+    margin: 0 auto 56px;
+  }
+
+  /* ─── CARDS ─── */
+  .cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .card {
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    padding: 32px 28px;
+    border-radius: 18px;
+    width: 240px;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    text-align: left;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px var(--blue-glow);
+    border-color: rgba(10,132,255,0.4);
+  }
+
+  .card-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+
+  .card p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ─── SPECS ─── */
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .spec-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: border-color 0.2s;
+  }
+
+  .spec-item:hover { border-color: rgba(10,132,255,0.4); }
+
+  .spec-icon { font-size: 24px; flex-shrink: 0; }
+
+  .spec-info {}
+
+  .spec-name {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
+  }
+
+  .spec-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* ─── DEPOIMENTOS ─── */
+  .testimonials-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .testimonial-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 28px;
+    max-width: 320px;
+    text-align: left;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(10,132,255,0.35);
+  }
+
+  .stars { color: #FFB800; font-size: 16px; margin-bottom: 12px; }
+
+  .testimonial-text {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 18px;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .author-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .author-name { font-size: 14px; font-weight: 600; color: #fff; }
+  .author-location { font-size: 12px; color: var(--muted); }
+
+  /* ─── CTA FINAL ─── */
+  .cta-section {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 50%, rgba(10,132,255,0.13), transparent);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cta-section h2 { margin-bottom: 12px; }
+  .cta-section p { color: var(--muted); font-size: 17px; margin-bottom: 36px; }
+
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #020304;
+    border-top: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  footer p { font-size: 14px; color: var(--muted); }
+
+  footer .footer-links { display: flex; gap: 20px; }
+
+  footer .footer-links a {
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  footer .footer-links a:hover { color: #fff; }
+
+  /* ─── RESPONSIVO ─── */
+  @media (max-width: 900px) {
+    header { padding: 16px 24px; }
+    nav a:not(.btn-nav) { display: none; }
+
+    .hero {
+      flex-direction: column;
+      text-align: center;
+      padding: 100px 24px 60px;
+    }
+
+    .hero p { margin: 0 auto 28px; }
+    .hero-actions { justify-content: center; }
+    .hero img { width: 260px; }
+
+    .stats-bar { gap: 32px; padding: 24px; }
+
+    section { padding: 72px 24px; }
+
+    footer { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- ─── PARTÍCULAS ANIMADAS ─── -->
+<div id="particles"></div>
+
+<main>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <a href="#" class="logo">
+    <div class="logo-icon">⚡</div>
+    <span class="logo-text">Tech<span>Brasil</span></span>
+  </a>
+  <nav>
+    <a href="#" onclick="showTab('inicio'); return false;">Início</a>
+    <a href="#" onclick="showTab('sobre'); return false;">Sobre</a>
+    <a href="#" onclick="showTab('produto'); return false;">Produto</a>
+    <a href="#" onclick="showTab('clientes'); return false;">Clientes</a>
+    <a href="#" onclick="showTab('faq'); return false;">FAQ</a>
+    <a href="https://wa.me/SEUNUMERO" target="_blank" class="btn-nav">Comprar agora</a>
+  </nav>
+</header>
+<!-- ─── SISTEMA DE ABAS ─── -->
+<div style="padding: 0 48px;">
+  <div class="tabs-nav" style="max-width: 1200px; margin: 0 auto;">
+    <button class="tab-btn active" onclick="showTab('inicio')">Home</button>
+    <button class="tab-btn" onclick="showTab('sobre')">Sobre</button>
+    <button class="tab-btn" onclick="showTab('produto')">Produto</button>
+    <button class="tab-btn" onclick="showTab('clientes')">Clientes</button>
+    <button class="tab-btn" onclick="showTab('faq')">FAQ</button>
+  </div>
+</div>
+
+<!-- ─── ABA: INÍCIO ─── -->
+<div id="tab-inicio" class="tab-content active">
+
+<!-- ─── CRO NÔMETRO DE OFERTA ─── -->
+<div style="background: linear-gradient(135deg, rgba(10, 132, 255, 0.15) 0%, rgba(10, 132, 255, 0.05) 100%); border-bottom: 2px solid var(--blue); padding: 16px 48px; text-align: center;">
+  <p style="color: var(--muted); font-size: 14px; margin-bottom: 8px;">⏰ OFERTA RELÂMPAGO ATIVA</p>
+  <p style="color: var(--text); font-size: 16px; font-weight: 700;">Frete Grátis + Desconto Especial encerra em: <span class="countdown" id="countdown">00:45:12</span></p>
+</div>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-text" data-aos="fade-right" data-aos-duration="800">
+    <div class="badge">⚡ Novidade 2026 · Frete Grátis</div>
+    <h2>Energia solar<br><span>em qualquer lugar</span></h2>
+    <p>Carregador portátil solar de alta capacidade — ideal para viagens, camping e emergências. Carregue seus dispositivos sem precisar de tomada.</p>
+
+    <div class="price-block">
+      <div class="price-label">Preço especial</div>
+      <div class="price"><sup>R$</sup>149<sup>,90</sup></div>
+      <div class="price-installment">ou 3× de R$ 49,97 sem juros</div>
+    </div>
+
+    <div class="hero-actions">
+      <a href="https://wa.me/SEUNUMERO" target="_blank" class="btn">
+        💬 Comprar via WhatsApp
+      </a>
+      <a href="#beneficios" class="btn-outline">Ver benefícios ↓</a>
+    </div>
+  </div>
+
+  <div class="hero-image-wrap" data-aos="fade-left" data-aos-duration="800">
+    <img
+      src="./carregador_solar.png"
+      alt="Carregador Solar Portátil Tech Brasil com logo TECH BRASIL"
+    >
+  </div>
+</section>
+
+<!-- ─── MOTIVOS PARA COMPRAR (PROFISSIONAIS DE RUA) ─── -->
+<section style="padding: 80px 48px; background: rgba(10, 132, 255, 0.03); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Perfeito para você</span>
+      <h2>Por que profissionais de rua escolhem o Carregador Solar</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Se você trabalha na rua com o celular, este é o produto que você precisa.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
+      <!-- Motorista de Uber/99 -->
+      <div data-aos="fade-up" data-aos-delay="0" style="background: var(--surface); padding: 32px; border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s;">
+        <div style="font-size: 48px; margin-bottom: 16px;">🚗</div>
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--text);">Motorista de Uber/99</h3>
+        <p style="color: var(--muted); line-height: 1.6;">Nunca mais fique sem bateria durante o dia. Carregue seu celular enquanto espera por corridas ou durante o intervalo.</p>
+      </div>
+
+      <!-- Taxista -->
+      <div data-aos="fade-up" data-aos-delay="100" style="background: var(--surface); padding: 32px; border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s;">
+        <div style="font-size: 48px; margin-bottom: 16px;">🚕</div>
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--text);">Taxista</h3>
+        <p style="color: var(--muted); line-height: 1.6;">Mantenha o GPS e aplicativos de comunicação sempre carregados. Sem dependência de tomada ou carro ligado.</p>
+      </div>
+
+      <!-- Entregador -->
+      <div data-aos="fade-up" data-aos-delay="200" style="background: var(--surface); padding: 32px; border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s;">
+        <div style="font-size: 48px; margin-bottom: 16px;">🏍️</div>
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--text);">Entregador (Ifood, Loggi, etc)</h3>
+        <p style="color: var(--muted); line-height: 1.6;">Trabalhe o dia todo sem se preocupar com bateria. Receba pedidos, navegue e comunique-se com confiança.</p>
+      </div>
+
+      <!-- Vendedor Ambulante -->
+      <div data-aos="fade-up" data-aos-delay="300" style="background: var(--surface); padding: 32px; border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s;">
+        <div style="font-size: 48px; margin-bottom: 16px;">🛒</div>
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--text);">Vendedor Ambulante</h3>
+        <p style="color: var(--muted); line-height: 1.6;">Use máquina de cartão, WhatsApp e redes sociais o dia todo. Aumente suas vendas sem limite de bateria.</p>
+      </div>
+
+      <!-- Profissional Autônomo -->
+      <div data-aos="fade-up" data-aos-delay="400" style="background: var(--surface); padding: 32px; border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s;">
+        <div style="font-size: 48px; margin-bottom: 16px;">💼</div>
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--text);">Profissional Autônomo</h3>
+        <p style="color: var(--muted); line-height: 1.6;">Mantenha contato com clientes, acesse e-mails e aplicativos sem se preocupar com falta de energia.</p>
+      </div>
+
+      <!-- Viajante/Mochileiro -->
+      <div data-aos="fade-up" data-aos-delay="500" style="background: var(--surface); padding: 32px; border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s;">
+        <div style="font-size: 48px; margin-bottom: 16px;">✈️</div>
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--text);">Viajante/Mochileiro</h3>
+        <p style="color: var(--muted); line-height: 1.6;">Explore o mundo sem se preocupar com falta de bateria. Carregue durante o dia, use à noite.</p>
+      </div>
+    </div>
+
+    <div data-aos="fade-up" style="text-align: center; margin-top: 60px; padding: 40px; background: rgba(10, 132, 255, 0.08); border-radius: 16px; border: 1px solid var(--border);">
+      <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 16px;">🔋 A Solução Perfeita para Quem Trabalha na Rua</h3>
+      <p style="color: var(--muted); font-size: 16px; max-width: 700px; margin: 0 auto 24px;">Com 20.000 mAh de capacidade e carga solar, você terá energia infinita onde quer que esteja. Sem depender de tomadas, sem custos com eletricidade.</p>
+      <a href="https://wa.me/SEUNUMERO" target="_blank" class="btn" style="display: inline-block;">💬 Comprar Agora e Trabalhar Sem Preocupação</a>
+    </div>
+  </div>
+</sec</section>
+
+</div> <!-- Fim aba-inicio -->
+
+<!-- ─── ABA: SOBRE ─── -->
+<div id="tab-sobre" class="tab-content">
+
+<!-- ─── QUEM SOMOS ─── -->
+<section id="quem-somos" style="padding: 80px 48px; background: rgba(255,255,255,0.008);">
+  <div data-aos="fade-up">
+    <span class="section-label">Nossa história</span>
+    <h2>Quem Somos</h2>
+  </div>
+
+  <div style="max-width: 720px; margin: 48px auto; text-align: left;" data-aos="fade-up" data-aos-delay="100">
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 40px; line-height: 1.8;">
+      <p style="color: var(--muted); font-size: 16px; margin-bottom: 20px;">
+        A <strong style="color: #fff;">TechBrasil</strong> nasceu com o objetivo de tornar a tecnologia mais acessível e sustentável para todos os brasileiros. Fundada por um grupo de jovens empreendedores preocupados com o meio ambiente e com a falta de acesso à energia em algumas regiões, a empresa desenvolveu seu principal produto: um carregador portátil movido a energia solar.
+      </p>
+      <p style="color: var(--muted); font-size: 16px;">
+        Com o tempo, a TechBrasil expandiu seu portfólio, criando outros produtos tecnológicos inovadores, sempre mantendo o foco em <strong style="color: var(--blue);">sustentabilidade</strong>, <strong style="color: var(--blue);">acessibilidade</strong> e <strong style="color: var(--blue);">qualidade</strong>.
+      </p>
+    </div>
+  </div>
+
+  <div class="cards" style="margin-top: 48px;">
+    <div class="card" data-aos="zoom-in" data-aos-delay="0">
+      <span class="card-icon">🌱</span>
+      <h3>Sustentabilidade</h3>
+      <p>Comprometidos em reduzir o impacto ambiental através de tecnologia limpa e responsável.</p>
+    </div>
+    <div class="card" data-aos="zoom-in" data-aos-delay="100">
+      <span class="card-icon">🤝</span>
+      <h3>Acessibilidade</h3>
+      <p>Tornando a tecnologia de ponta acessível para todos os brasileiros, independentemente da região.</p>
+    </div>
+    <div class="card" data-aos="zoom-in" data-aos-delay="200">
+      <span class="card-icon">⭐</span>
+      <h3>Qualidade</h3>
+      <p>Produtos desenvolvidos com rigor técnico e garantia de satisfação do cliente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STATS ─── -->
+<div class="stats-bar" data-aos="fade-up">
+  <div class="stat">
+    <div class="stat-number">+2.400</div>
+    <div class="stat-label">Clientes satisfeitos</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">4.9★</div>
+    <div class="stat-label">Avaliação média</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">20.000</div>
+    <div class="stat-label">mAh de capacidade</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">12 meses</div>
+    <div class="stat-label">Garantia inclusa</div>
+  </div>
+</div>
+
+<!-- ─── BENEFÍCIOS ─── -->
+<section id="beneficios">
+  <div data-aos="fade-up">
+    <span class="section-label">Por que escolher</span>
+    <h2>Feito para quem não para</h2>
+    <p class="subtitle">Tecnologia de ponta em um carregador compacto, resistente e 100% sustentável.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card" data-aos="zoom-in" data-aos-delay="0">
+      <span class="card-icon">☀️</span>
+      <h3>Energia Solar</h3>
+      <p>Painel solar de alta eficiência que carrega em qualquer local com luz natural.</p>
+    </div>
+    <div class="card" data-aos="zoom-in" data-aos-delay="100">
+      <span class="card-icon">🔋</span>
+      <h3>Alta Capacidade</h3>
+      <p>20.000 mAh para carregar seu celular até 5 vezes sem precisar de recarga.</p>
+    </div>
+    <div class="card" data-aos="zoom-in" data-aos-delay="200">
+      <span class="card-icon">🌍</span>
+      <h3>Sustentável</h3>
+      <p>Zero energia elétrica da rede. Reduza sua pegada de carbono com tecnologia limpa.</p>
+    </div>
+    <div class="card" data-aos="zoom-in" data-aos-delay="300">
+      <span class="card-icon">🛡️</span>
+      <h3>Resistente</h3>
+      <p>Certificação IP65 — resistente a respingos, poeira e impactos leves.</p>
+    </div>
+    <div class="card" data-aos="zoom-in" data-aos-delay="400">
+      <span class="card-icon">⚡</span>
+      <h3>Carga Rápida</h3>
+      <p>Tecnologia Fast Charge 18W para carregar seus dispositivos em tempo recorde.</p>
+    </div>
+    <div class="card" data-aos="zoom-in" data-aos-delay="500">
+      <span class="card-icon">🔌</span>
+      <h3>Multi-porta</h3>
+      <p>2× USB-A + 1× USB-C para carregar até 3 dispositivos simultaneamente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ESPECIFICAÇÕES ─── -->
+<section id="especificacoes" style="background: rgba(255,255,255,0.015);">
+  <div data-aos="fade-up">
+    <span class="section-label">Ficha técnica</span>
+    <h2>Especificações</h2>
+    <p class="subtitle">Tudo que você precisa saber antes de comprar.</p>
+  </div>
+
+  <div class="specs-grid" data-aos="fade-up" data-aos-delay="100">
+    <div class="spec-item">
+      <span class="spec-icon">🔋</span>
+      <div class="spec-info">
+        <div class="spec-name">Capacidade</div>
+        <div class="spec-value">20.000 mAh</div>
+      </div>
+    </div>
+    <div class="spec-item">
+      <span class="spec-icon">⚡</span>
+      <div class="spec-info">
+        <div class="spec-name">Carga rápida</div>
+        <div class="spec-value">18W Fast Charge</div>
+      </div>
+    </div>
+    <div class="spec-item">
+      <span class="spec-icon">🔌</span>
+      <div class="spec-info">
+        <div class="spec-name">Portas de saída</div>
+        <div class="spec-value">2× USB-A + 1× USB-C</div>
+      </div>
+    </div>
+    <div class="spec-item">
+      <span class="spec-icon">☀️</span>
+      <div class="spec-info">
+        <div class="spec-name">Painel solar</div>
+        <div class="spec-value">5W · Alta eficiência</div>
+      </div>
+    </div>
+    <div class="spec-item">
+      <span class="spec-icon">🛡️</span>
+      <div class="spec-info">
+        <div class="spec-name">Resistência</div>
+        <div class="spec-value">IP65 (água e poeira)</div>
+      </div>
+    </div>
+    <div class="spec-item">
+      <span class="spec-icon">📐</span>
+      <div class="spec-info">
+        <div class="spec-name">Dimensões</div>
+        <div class="spec-value">16 × 8 × 2 cm</div>
+      </div>
+    </div>
+    <div class="spec-item">
+      <span class="spec-icon">🏷️</span>
+      <div class="spec-info">
+        <div class="spec-name">Garantia</div>
+        <div class="spec-value">12 meses</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DEPOIMENTOS ─── -->
+<section id="depoimentos">
+  <div data-aos="fade-up">
+    <span class="section-label">Avaliações reais</span>
+    <h2>O que nossos clientes dizem</h2>
+    <p class="subtitle">Mais de 2.400 clientes satisfeitos em todo o Brasil.</p>
+  </div>
+
+  <div class="testimonials-grid">
+    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="0">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Perfeito pra viagem! Fui acampar por 5 dias e não precisei de tomada nenhuma. Salvou minha bateria várias vezes!"</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">M</div>
+        <div>
+          <div class="author-name">Marcos Oliveira</div>
+          <div class="author-location">São Paulo, SP</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="150">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Produto incrível! Muito bom, recomendo demais. Chegou rápido e bem embalado. Já comprei um segundo para presentear."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">A</div>
+        <div>
+          <div class="author-name">Ana Paula Costa</div>
+          <div class="author-location">Curitiba, PR</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="300">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Comprei com desconfiança, mas superou minhas expectativas. A carga solar realmente funciona muito bem. Vale cada centavo!"</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">R</div>
+        <div>
+          <div class="author-name">Rafael Mendes</div>
+          <div class="author-location">Belo Horizonte, MG</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section id="faq">
+  <div data-aos="fade-up">
+    <span class="section-label">Dúvidas frequentes</span>
+    <h2>Perguntas Frequentes</h2>
+    <p class="subtitle">Encontre respostas para as dúvidas mais comuns sobre nosso carregador solar.</p>
+  </div>
+
+  <div style="max-width: 700px; margin: 48px auto; text-align: left;" data-aos="fade-up" data-aos-delay="100">
+    <details style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s;">
+      <summary style="font-weight: 600; color: #fff; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+        <span>Quanto tempo leva para carregar completamente?</span>
+        <span style="font-size: 20px; margin-left: 16px;">+</span>
+      </summary>
+      <p style="color: var(--muted); margin-top: 16px; font-size: 15px; line-height: 1.6;">
+        O tempo de carga completa via painel solar varia de 8 a 12 horas, dependendo da intensidade da luz solar. Via carregador USB-C, leva aproximadamente 4 a 6 horas para uma carga completa.
+      </p>
+    </details>
+
+    <details style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s;">
+      <summary style="font-weight: 600; color: #fff; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+        <span>Funciona em dias nublados?</span>
+        <span style="font-size: 20px; margin-left: 16px;">+</span>
+      </summary>
+      <p style="color: var(--muted); margin-top: 16px; font-size: 15px; line-height: 1.6;">
+        Sim, funciona em dias nublados, mas com eficiência reduzida. O painel solar consegue captar luz mesmo em condições de céu nublado, embora o carregamento seja mais lento.
+      </p>
+    </details>
+
+    <details style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s;">
+      <summary style="font-weight: 600; color: #fff; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+        <span>Qual é a capacidade de carga?</span>
+        <span style="font-size: 20px; margin-left: 16px;">+</span>
+      </summary>
+      <p style="color: var(--muted); margin-top: 16px; font-size: 15px; line-height: 1.6;">
+        O carregador possui 20.000 mAh de capacidade, o que é suficiente para carregar um smartphone moderno de 4 a 5 vezes, dependendo da capacidade da bateria do dispositivo.
+      </p>
+    </details>
+
+    <details style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s;">
+      <summary style="font-weight: 600; color: #fff; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+        <span>Possui garantia?</span>
+        <span style="font-size: 20px; margin-left: 16px;">+</span>
+      </summary>
+      <p style="color: var(--muted); margin-top: 16px; font-size: 15px; line-height: 1.6;">
+        Sim! Todos os nossos carregadores possuem garantia de 12 meses contra defeitos de fabricação. Oferecemos suporte técnico completo durante este período.
+      </p>
+    </details>
+
+    <details style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s;">
+      <summary style="font-weight: 600; color: #fff; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+        <span>Como é a entrega?</span>
+        <span style="font-size: 20px; margin-left: 16px;">+</span>
+      </summary>
+      <p style="color: var(--muted); margin-top: 16px; font-size: 15px; line-height: 1.6;">
+        Oferecemos frete grátis para todo o Brasil via correios. O prazo de entrega varia de 5 a 15 dias úteis, dependendo da sua localização. Você receberá um código de rastreamento.
+      </p>
+    </details>
+
+    <details style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; cursor: pointer; transition: all 0.3s;">
+      <summary style="font-weight: 600; color: #fff; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+        <span>É seguro para usar com qualquer dispositivo?</span>
+        <span style="font-size: 20px; margin-left: 16px;">+</span>
+      </summary>
+      <p style="color: var(--muted); margin-top: 16px; font-size: 15px; line-height: 1.6;">
+        Absolutamente! O carregador possui proteção contra sobrecarga, curto-circuito e sobrecorrente. É seguro para usar com smartphones, tablets, fones de ouvido e qualquer dispositivo com USB.
+      </p>
+    </details>
+  </div>
+</section>
+
+<style>
+  details[open] {
+    background: rgba(10, 132, 255, 0.1) !important;
+    border-color: rgba(10, 132, 255, 0.3) !important;
+  }
+
+  details[open] summary span:last-child {
+    transform: rotate(45deg);
+    transition: transform 0.3s;
+  }
+</style>
+
+<!-- ─── VÍDEO DE DEMONSTRAÇÃO ─── -->
+<section style="padding: 80px 48px; background: rgba(10, 132, 255, 0.03); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Veja em ação</span>
+      <h2>Demonstração do Produto</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Confira como o carregador solar funciona na prática.</p>
+    </div>
+    <div data-aos="fade-up" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.3s;">
+      <img src="./demo_video_thumb.png" alt="Demonstração do Carregador Solar" style="width: 100%; height: auto; display: block;">
+      <div style="padding: 24px; text-align: center;">
+        <p style="color: var(--muted); font-weight: 600;">Clique para assistir ao vídeo completo</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMPARATIVO ─── -->
+<section style="padding: 80px 48px;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Compare</span>
+      <h2>Por que escolher TechBrasil?</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Veja como nos comparamos com outras marcas.</p>
+    </div>
+    <div data-aos="fade-up" style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+        <thead>
+          <tr style="background: rgba(10, 132, 255, 0.1); border-bottom: 1px solid var(--border);">
+            <th style="padding: 20px; text-align: left; font-weight: 700;">Característica</th>
+            <th style="padding: 20px; text-align: center; color: var(--blue); font-weight: 700;">TechBrasil</th>
+            <th style="padding: 20px; text-align: center; color: var(--muted);">Marca A</th>
+            <th style="padding: 20px; text-align: center; color: var(--muted);">Marca B</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 16px 20px;">Carga Solar</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue);">✓</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">✗</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">✗</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 16px 20px;">20.000 mAh</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue);">✓</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">✗</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">✓</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 16px 20px;">Fast Charge 18W</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue);">✓</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">✓</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">✗</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 16px 20px;">IP65 Resistente</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue);">✓</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">✓</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">✓</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 16px 20px;">Garantia 12 meses</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue);">✓</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">6 meses</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">6 meses</td>
+          </tr>
+          <tr>
+            <td style="padding: 16px 20px; font-weight: 700;">Preço</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue); font-weight: 700;">R$ 149,90</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">R$ 199,90</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--muted);">R$ 179,90</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CERTIFICAÇÕES E PRÊMİOS ─── -->
+<section style="padding: 80px 48px; background: rgba(10, 132, 255, 0.03); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Confiança</span>
+      <h2>Certificações e Prêmios</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Reconhecimento de qualidade e sustentabilidade.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px;">
+      <div data-aos="fade-up" style="text-align: center; padding: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
+        <div style="font-size: 48px; margin-bottom: 16px;">🏆</div>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Melhor Produto Sustentável 2025</h3>
+        <p style="color: var(--muted); font-size: 14px;">Premiação pela inovação em energia limpa</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100" style="text-align: center; padding: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
+        <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Certificado ISO 9001</h3>
+        <p style="color: var(--muted); font-size: 14px;">Qualidade internacional garantida</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="200" style="text-align: center; padding: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
+        <div style="font-size: 48px; margin-bottom: 16px;">🌍</div>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Empresa B Certificada</h3>
+        <p style="color: var(--muted); font-size: 14px;">Comprometida com impacto social</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BLOG/ARTIGOS ─── -->
+<section style="padding: 80px 48px;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Conhecimento</span>
+      <h2>Blog e Dicas</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Aprenda como aproveitar melhor a energia solar.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px;">
+      <div data-aos="fade-up" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.3s;">
+        <div style="background: rgba(10, 132, 255, 0.2); height: 180px; display: flex; align-items: center; justify-content: center; font-size: 64px;">☀️</div>
+        <div style="padding: 24px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Como Maximizar a Carga Solar</h3>
+          <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Dicas práticas para carregar seu dispositivo mais rápido com energia solar.</p>
+          <a href="#" style="color: var(--blue); font-weight: 600; text-decoration: none;">Ler mais →</a>
+        </div>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.3s;">
+        <div style="background: rgba(10, 132, 255, 0.2); height: 180px; display: flex; align-items: center; justify-content: center; font-size: 64px;">🔋</div>
+        <div style="padding: 24px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Cuidados com a Bateria</h3>
+          <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Prolongue a vida útil do seu carregador com essas dicas simples.</p>
+          <a href="#" style="color: var(--blue); font-weight: 600; text-decoration: none;">Ler mais →</a>
+        </div>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="200" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.3s;">
+        <div style="background: rgba(10, 132, 255, 0.2); height: 180px; display: flex; align-items: center; justify-content: center; font-size: 64px;">🌱</div>
+        <div style="padding: 24px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Sustentabilidade em Ação</h3>
+          <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Descubra o impacto ambiental positivo de usar energia solar.</p>
+          <a href="#" style="color: var(--blue); font-weight: 600; text-decoration: none;">Ler mais →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTADOR DE ESTOQUE ─── -->
+<section style="padding: 80px 48px; background: rgba(10, 132, 255, 0.05); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+    <div data-aos="fade-up">
+      <span class="section-label">Oferta Urgente</span>
+      <h2>Estoque Limitado</h2>
+      <p style="color: var(--muted); font-size: 17px; margin-bottom: 32px;">Apenas <span style="color: var(--blue); font-weight: 700; font-size: 24px;">47</span> unidades restantes!</p>
+      <div style="background: var(--surface); border: 2px solid var(--blue); border-radius: 16px; padding: 32px; display: inline-block;">
+        <p style="color: var(--muted); margin-bottom: 16px;">A demanda está alta. Não perca a oportunidade!</p>
+        <a href="https://wa.me/SEUNUMERO" target="_blank" class="btn" style="display: inline-block;">💬 Garanta a Sua Agora</a>
+      </div>
+    </div>
+  </div>
+<</section>
+
+</div> <!-- Fim aba-produto -->
+
+<!-- ─── ABA: CLIENTES ─── -->
+<div id="tab-clientes" class="tab-content">
+
+<!-- ─── AVALIAÇÕES REAIS ─── -->
+<section style="padding: 80px 48px;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Avaliações</span>
+      <h2>O que nossos clientes dizem</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Profissionais de rua já usam o Carregador Solar TechBrasil.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; text-align: center;">
+      <div data-aos="fade-up" style="padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">🚗</div>
+        <p style="font-weight: 600;">Motoristas Uber</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="50" style="padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">🚕</div>
+        <p style="font-weight: 600;">Taxistas</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100" style="padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">🏍️</div>
+        <p style="font-weight: 600;">Entregadores</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="150" style="padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">🛒</div>
+        <p style="font-weight: 600;">Vendedores</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="200" style="padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">💼</div>
+        <p style="font-weight: 600;">Autônomos</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="250" style="padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">✈️</div>
+        <p style="font-weight: 600;">Viajantes</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── GARANTIA EXPANDIDA ─── -->
+<section style="padding: 80px 48px; background: rgba(10, 132, 255, 0.03); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Proteção</span>
+      <h2>Opções de Garantia</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Escolha o plano que melhor se adequa à sua necessidade.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
+      <div data-aos="fade-up" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center;">
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Garantia Padrão</h3>
+        <p style="color: var(--blue); font-size: 28px; font-weight: 800; margin-bottom: 16px;">12 meses</p>
+        <p style="color: var(--muted); margin-bottom: 24px; line-height: 1.6;">Cobertura contra defeitos de fabricação e suporte técnico completo.</p>
+        <p style="color: var(--muted); font-size: 14px;">Incluída na compra</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100" style="background: var(--surface); border: 2px solid var(--blue); border-radius: 16px; padding: 32px; text-align: center; position: relative;">
+        <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--blue); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">RECOMENDADO</div>
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Proteção Plus</h3>
+        <p style="color: var(--blue); font-size: 28px; font-weight: 800; margin-bottom: 16px;">24 meses</p>
+        <p style="color: var(--muted); margin-bottom: 24px; line-height: 1.6;">Cobertura estendida + proteção contra acidentes + troca rápida.</p>
+        <p style="color: var(--blue); font-weight: 700;">+R$ 29,90</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="200" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center;">
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Proteção Total</h3>
+        <p style="color: var(--blue); font-size: 28px; font-weight: 800; margin-bottom: 16px;">36 meses</p>
+        <p style="color: var(--muted); margin-bottom: 24px; line-height: 1.6;">Cobertura máxima + suporte prioritário + substituição gratuita.</p>
+        <p style="color: var(--blue); font-weight: 700;">+R$ 59,90</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DEPOIMENTOS EM VÍDEO ─── -->
+<section style="padding: 80px 48px;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Histórias Reais</span>
+      <h2>Depoimentos em Vídeo</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Ouça diretamente de quem usa o produto.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px;">
+      <div data-aos="fade-up" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;">
+        <img src="./depoimento_uber.png" alt="Motorista Uber com Carregador Solar" style="width: 100%; height: auto; display: block;">
+        <div style="padding: 24px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Motorista Uber - João</h3>
+          <p style="color: var(--muted); font-size: 14px;">"Муdou minha vida profissional. Agora trabalho o dia todo sem preocupação com bateria."</p>
+        </div>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;">
+        <img src="./depoimento_entregador.png" alt="Entregador com Carregador Solar" style="width: 100%; height: auto; display: block;">
+        <div style="padding: 24px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Entregador - Carlos</h3>
+          <p style="color: var(--muted); font-size: 14px;">"Меlhor investimento que fiz. Entrego muito mais por dia agora."</p>
+        </div>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="200" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;">
+        <img src="./depoimento_vendedora.png" alt="Vendedora com Carregador Solar" style="width: 100%; height: auto; display: block;">
+        <div style="padding: 24px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Vendedora - Maria</h3>
+          <p style="color: var(--muted); font-size: 14px;">"Рecomendo para todos os meus colegas. Ótimo custo-benefício."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CALCULADORA DE ECONOMIA ─── -->
+<section style="padding: 80px 48px; background: rgba(10, 132, 255, 0.03); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width: 800px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Economia</span>
+      <h2>Quanto Você Economiza?</h2>
+      <p style="color: var(--muted); font-size: 17px;">Calcule sua economia anual com energia solar.</p>
+    </div>
+    <div data-aos="fade-up" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px;">
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Horas de uso por dia:</label>
+        <input type="range" min="1" max="12" value="6" style="width: 100%; cursor: pointer;" onchange="updateEconomy(this.value)" id="hoursSlider">
+        <p style="color: var(--muted); font-size: 14px; margin-top: 8px;"><span id="hoursDisplay">6</span> horas</p>
+      </div>
+      <div style="background: rgba(10, 132, 255, 0.1); border-radius: 12px; padding: 24px; text-align: center;">
+        <p style="color: var(--muted); margin-bottom: 8px;">Economia anual estimada:</p>
+        <p style="color: var(--blue); font-size: 32px; font-weight: 800;">R$ <span id="economyDisplay">216</span>/ano</p>
+        <p style="color: var(--muted); font-size: 14px; margin-top: 8px;">Considerando tarifa média de R$ 0,80/kWh</p>
+      </div>
+      <script>
+        function updateEconomy(hours) {
+          document.getElementById('hoursDisplay').textContent = hours;
+          const dailyUsage = hours * 0.02; // 20W médio
+          const annualUsage = dailyUsage * 365 / 1000; // em kWh
+          const economy = Math.round(annualUsage * 0.80);
+          document.getElementById('economyDisplay').textContent = economy;
+        }
+      </script>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SUSTENTABILIDADE ─── -->
+<section style="padding: 80px 48px;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Impacto Ambiental</span>
+      <h2>Sua Contribuição para o Planeta</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Cada carregador solar TechBrasil faz diferença.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 32px;">
+      <div data-aos="fade-up" style="text-align: center; padding: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
+        <p style="color: var(--blue); font-size: 40px; font-weight: 800; margin-bottom: 12px;">2.5 kg</p>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">CO₂ Economizado/ano</h3>
+        <p style="color: var(--muted); font-size: 14px;">Por cada carregador em uso</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100" style="text-align: center; padding: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
+        <p style="color: var(--blue); font-size: 40px; font-weight: 800; margin-bottom: 12px;">1 🌳</p>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Equivalente a 1 Árvore</h3>
+        <p style="color: var(--muted); font-size: 14px;">Plantada a cada 10 carregadores vendidos</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="200" style="text-align: center; padding: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
+        <p style="color: var(--blue); font-size: 40px; font-weight: 800; margin-bottom: 12px;">0 ⚡</p>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Energia da Rede</h3>
+        <p style="color: var(--muted); font-size: 14px;">100% energia solar renovavel</p>
+      </div>
+    </div>
+    <div data-aos="fade-up" style="text-align: center; margin-top: 60px; padding: 40px; background: rgba(10, 132, 255, 0.08); border-radius: 16px; border: 1px solid var(--border);">
+      <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 16px;">Junte-se ao Movimento Sustentável</h3>
+      <p style="color: var(--muted); font-size: 16px; max-width: 600px; margin: 0 auto 24px;">Cada compra contribui para um planeta mais limpo e um futuro melhor para as próximas gerações.</p>
+      <a href="https://wa.me/SEUNUMERO" target="_blank" class="btn" style="display: inline-block;">💬 Fazer Minha Parte Agora</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── UNBOXING VIRTUAL ─── -->
+<section style="padding: 80px 48px; background: rgba(10, 132, 255, 0.03); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Unboxing</span>
+      <h2>O que Vem na Caixa</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Tudo que você recebe quando o seu carregador chegar.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+      <div data-aos="fade-up">
+        <img src="./unboxing_product.png" alt="Unboxing do Carregador Solar" style="width: 100%; border-radius: 16px; border: 1px solid var(--border);">
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px;">
+          <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 24px;">Embalagem Premium</h3>
+          <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+            <div style="font-size: 32px;">1×</div>
+            <div>
+              <p style="font-weight: 700; margin-bottom: 4px;">Carregador Solar 20.000 mAh</p>
+              <p style="color: var(--muted); font-size: 14px;">Com painel solar de alta eficiência</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+            <div style="font-size: 32px;">2×</div>
+            <div>
+              <p style="font-weight: 700; margin-bottom: 4px;">Cabos USB Certificados</p>
+              <p style="color: var(--muted); font-size: 14px;">USB-C e Micro USB de alta qualidade</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+            <div style="font-size: 32px;">1×</div>
+            <div>
+              <p style="font-weight: 700; margin-bottom: 4px;">Manual do Usuário</p>
+              <p style="color: var(--muted); font-size: 14px;">Em português com dicas de uso</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+            <div style="font-size: 32px;">1×</div>
+            <div>
+              <p style="font-weight: 700; margin-bottom: 4px;">Bolsa de Transporte</p>
+              <p style="color: var(--muted); font-size: 14px;">Proteção e portabilidade</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 16px;">
+            <div style="font-size: 32px;">1×</div>
+            <div>
+              <p style="font-weight: 700; margin-bottom: 4px;">Cartilha de Sustentabilidade</p>
+              <p style="color: var(--muted); font-size: 14px;">Dicas para viver de forma mais verde</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TABELA DE DISPOSITIVOS ─── -->
+<section style="padding: 80px 48px;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Compatibilidade</span>
+      <h2>Quantas Cargas por Dispositivo?</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Veja quantas vezes vocé pode carregar cada dispositivo.</p>
+    </div>
+    <div data-aos="fade-up" style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+        <thead>
+          <tr style="background: rgba(10, 132, 255, 0.1); border-bottom: 1px solid var(--border);">
+            <th style="padding: 20px; text-align: left; font-weight: 700;">Dispositivo</th>
+            <th style="padding: 20px; text-align: center; color: var(--blue); font-weight: 700;">Capacidade Bateria</th>
+            <th style="padding: 20px; text-align: center; color: var(--blue); font-weight: 700;">Cargas Completas</th>
+            <th style="padding: 20px; text-align: center; color: var(--blue); font-weight: 700;">Tempo Aprox.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 16px 20px;">iPhone 15</td>
+            <td style="padding: 16px 20px; text-align: center;">3.349 mAh</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue); font-weight: 700;">6×</td>
+            <td style="padding: 16px 20px; text-align: center;">~12h</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 16px 20px;">Samsung Galaxy S24</td>
+            <td style="padding: 16px 20px; text-align: center;">4.000 mAh</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue); font-weight: 700;">5×</td>
+            <td style="padding: 16px 20px; text-align: center;">~10h</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 16px 20px;">Google Pixel 8</td>
+            <td style="padding: 16px 20px; text-align: center;">4.700 mAh</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue); font-weight: 700;">4×</td>
+            <td style="padding: 16px 20px; text-align: center;">~9h</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 16px 20px;">iPad Air</td>
+            <td style="padding: 16px 20px; text-align: center;">8.600 mAh</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue); font-weight: 700;">2×</td>
+            <td style="padding: 16px 20px; text-align: center;">~5h</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 16px 20px;">AirPods Pro</td>
+            <td style="padding: 16px 20px; text-align: center;">346 mAh</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue); font-weight: 700;">57×</td>
+            <td style="padding: 16px 20px; text-align: center;">~2h</td>
+          </tr>
+          <tr>
+            <td style="padding: 16px 20px;">Smartwatch</td>
+            <td style="padding: 16px 20px; text-align: center;">~500 mAh</td>
+            <td style="padding: 16px 20px; text-align: center; color: var(--blue); font-weight: 700;">40×</td>
+            <td style="padding: 16px 20px; text-align: center;">~2h</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FÁBRICA E QUALIDADE ─── -->
+<section style="padding: 80px 48px; background: rgba(10, 132, 255, 0.03); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Confiança</span>
+      <h2>Nossa Fábrica e Controle de Qualidade</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Cada carregador passa por testes rigorosos antes de chegar até você.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+      <div data-aos="fade-up">
+        <img src="./fabrica_qualidade.png" alt="Fábrica e Controle de Qualidade" style="width: 100%; border-radius: 16px; border: 1px solid var(--border);">
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px;">
+          <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 24px;">Processo de Qualidade</h3>
+          <div style="margin-bottom: 24px;">
+            <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+              <div style="color: var(--blue); font-weight: 700; font-size: 18px;✓</div>
+              <div>
+                <p style="font-weight: 700; margin-bottom: 4px;">Teste de Carga Solar</p>
+                <p style="color: var(--muted); font-size: 14px;">Eficiência em diferentes condições de luz</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+              <div style="color: var(--blue); font-weight: 700; font-size: 18px;✓</div>
+              <div>
+                <p style="font-weight: 700; margin-bottom: 4px;">Teste de Resistência</p>
+                <p style="color: var(--muted); font-size: 14px;">Queda de 1,5m, imersão em água</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+              <div style="color: var(--blue); font-weight: 700; font-size: 18px;✓</div>
+              <div>
+                <p style="font-weight: 700; margin-bottom: 4px;">Teste de Longevidade</p>
+                <p style="color: var(--muted); font-size: 14px;">500+ ciclos de carga e descarga</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <div style="color: var(--blue); font-weight: 700; font-size: 18px;✓</div>
+              <div>
+                <p style="font-weight: 700; margin-bottom: 4px;">Certificação ISO 9001</p>
+                <p style="color: var(--muted); font-size: 14px;">Padrões internacionais de qualidade</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROGRAMA DE INDICAÇÃO ─── -->
+<section style="padding: 80px 48px;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Ganhe Recompensas</span>
+      <h2>Programa de Indicação</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Indique para seus amigos e ganhe descontos exclusivos.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 32px;">
+      <div data-aos="fade-up" style="text-align: center; padding: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
+        <p style="color: var(--blue); font-size: 48px; font-weight: 800; margin-bottom: 12px;🆑</p>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Você Ganha</h3>
+        <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">R$ 25 de desconto em sua próxima compra</p>
+        <p style="color: var(--blue); font-weight: 700;">Por cada amigo que compra</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100" style="text-align: center; padding: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
+        <p style="color: var(--blue); font-size: 48px; font-weight: 800; margin-bottom: 12px;🎆</p>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Seu Amigo Ganha</h3>
+        <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">R$ 15 de desconto na primeira compra</p>
+        <p style="color: var(--blue); font-weight: 700;">Cupom exclusivo</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="200" style="text-align: center; padding: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;">
+        <p style="color: var(--blue); font-size: 48px; font-weight: 800; margin-bottom: 12px;🏆</p>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Top Indicador</h3>
+        <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Carregador Solar GRATIS</p>
+        <p style="color: var(--blue); font-weight: 700;">Após 5 indicações</p>
+      </div>
+    </div>
+    <div data-aos="fade-up" style="text-align: center; margin-top: 60px;">
+      <a href="https://wa.me/SEUNUMERO" target="_blank" class="btn" style="display: inline-block;">💬 Quero Indicar Meus Amigos</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── REVENDA ─── -->
+<section style="padding: 80px 48px; background: rgba(10, 132, 255, 0.03); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Oportunidade</span>
+      <h2>Seja um Revendedor TechBrasil</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Ganhe dinheiro revendendo nossos produtos com margens atrativas.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+      <div data-aos="fade-up">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px;">
+          <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 24px;">Vantagens da Revenda</h3>
+          <div style="margin-bottom: 16px;">
+            <p style="font-weight: 700; margin-bottom: 8px;✅ Margem de 30% a 40%</p>
+            <p style="color: var(--muted); font-size: 14px;">Lucro direto em cada venda</p>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <p style="font-weight: 700; margin-bottom: 8px;✅ Suporte de Marketing</p>
+            <p style="color: var(--muted); font-size: 14px;">Material promocional gratuito</p>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <p style="font-weight: 700; margin-bottom: 8px;✅ Preços Atacadistas</p>
+            <p style="color: var(--muted); font-size: 14px;">A partir de 10 unidades</p>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <p style="font-weight: 700; margin-bottom: 8px;✅ Treinamento Completo</p>
+            <p style="color: var(--muted); font-size: 14px;">Sobre o produto e vendas</p>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <p style="font-weight: 700; margin-bottom: 8px;✅ Suporte Dedicado</p>
+            <p style="color: var(--muted); font-size: 14px;">Time pronto para ajudar</p>
+          </div>
+        </div>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px;">
+          <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 24px;">Locais Ideais para Revenda</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div style="background: rgba(10, 132, 255, 0.1); padding: 16px; border-radius: 12px; text-align: center;">
+              <p style="font-size: 28px; margin-bottom: 8px;🚕</p>
+              <p style="font-weight: 600; font-size: 14px;">Pontos de Táxi</p>
+            </div>
+            <div style="background: rgba(10, 132, 255, 0.1); padding: 16px; border-radius: 12px; text-align: center;">
+              <p style="font-size: 28px; margin-bottom: 8px;⛽</p>
+              <p style="font-weight: 600; font-size: 14px;">Postos de Gasolina</p>
+            </div>
+            <div style="background: rgba(10, 132, 255, 0.1); padding: 16px; border-radius: 12px; text-align: center;">
+              <p style="font-size: 28px; margin-bottom: 8px;🌟</p>
+              <p style="font-weight: 600; font-size: 14px;">Lojas de Eletrônicos</p>
+            </div>
+            <div style="background: rgba(10, 132, 255, 0.1); padding: 16px; border-radius: 12px; text-align: center;">
+              <p style="font-size: 28px; margin-bottom: 8px;🏙</p>
+              <p style="font-weight: 600; font-size: 14px;">Lojas de Camping</p>
+            </div>
+          </div>
+          <a href="https://wa.me/SEUNUMERO" target="_blank" class="btn" style="display: block; text-align: center; margin-top: 24px;">💬 Quero Ser Revendedor</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── NEWSLETTER ─── -->
+<section style="padding: 80px 48px;">
+  <div style="max-width: 800px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 40px;">
+      <span class="section-label">Fique Atualizado</span>
+      <h2>Newsletter TechBrasil</h2>
+      <p style="color: var(--muted); font-size: 17px;">Receba dicas de sustentabilidade, cupons exclusivos e novidades em primeira mão.</p>
+    </div>
+    <div data-aos="fade-up" style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px;">
+      <form style="display: flex; gap: 12px;">
+        <input type="email" placeholder="Seu melhor e-mail" style="flex: 1; padding: 14px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Inter', sans-serif;" required>
+        <button type="submit" class="btn" style="padding: 14px 32px; white-space: nowrap;">💬 Inscrever</button>
+      </form>
+      <p style="color: var(--muted); font-size: 12px; margin-top: 12px; text-align: center;">Não enviamos spam. Apenas conteúdo valioso.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SELOS DE SEGURANÇA ─── -->
+<section style="padding: 60px 48px; background: rgba(10, 132, 255, 0.03); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 32px;">FORMAS DE PAGAMENTO E SEGURANÇA</p>
+    <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; align-items: center;">
+      <div style="text-align: center;">
+        <p style="font-size: 32px; margin-bottom: 8px;💳</p>
+        <p style="font-weight: 600; font-size: 14px;">Cartão de Crédito</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="font-size: 32px; margin-bottom: 8px;💵</p>
+        <p style="font-weight: 600; font-size: 14px;">PIX</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="font-size: 32px; margin-bottom: 8px;🔐</p>
+        <p style="font-weight: 600; font-size: 14px;">Site Blindado</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="font-size: 32px; margin-bottom: 8px;🏐</p>
+        <p style="font-weight: 600; font-size: 14px;">SSL Certificado</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="font-size: 32px; margin-bottom: 8px;✅</p>
+        <p style="font-weight: 600; font-size: 14px;">Google Safe</p>
+      </div>
+    </div>
+  </div></section>
+
+</div> <!-- Fim aba-sobre -->
+
+<!-- ─── ABA: PRODUTO ─── -->
+<div id="tab-produto" class="tab-content">
+
+<!-- ─── FICHA TÉCNICA ─── -->ection class="cta-section" id="contato">
+  <div data-aos="fade-up">
+    <span class="section-label">Oferta limitada</span>
+    <h2>Pronto para ter energia em qualquer lugar?</h2>
+    <p>Estoque limitado. Garanta o seu agora com frete grátis e 12 meses de garantia.</p>
+    <div class="cta-actions">
+      <a href="https://wa.me/SEUNUMERO" target="_blank" class="btn" style="font-size:17px; padding:18px 40px;">
+        💬 Comprar via WhatsApp — R$ 149,90
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SEÇÃO EM BREVE ─── -->
+<section style="padding: 80px 48px; text-align: center; background: rgba(10, 132, 255, 0.05); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);" data-aos="fade-up">
+  <h2 style="font-size: 36px; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.3px;">Em breve mais novidades! 🚀</h2>
+  <p style="color: var(--muted); font-size: 17px; max-width: 520px; margin: 0 auto;">Estamos trabalhando em novos produtos e recursos incríveis para trazer ainda mais sustentabilidade e inovação para você.</p>
+</section>
+
+</div> <!-- Fim aba-clientes -->
+
+<!-- ─── ABA: FAQ ─── -->
+<div id="tab-faq" class="tab-content">
+
+<!-- ─── FAQ ─── -->
+<section style="padding: 80px 48px;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div data-aos="fade-up" style="text-align: center; margin-bottom: 60px;">
+      <span class="section-label">Dúvidas</span>
+      <h2>Perguntas Frequentes</h2>
+      <p style="color: var(--muted); font-size: 17px; max-width: 600px; margin: 16px auto 0;">Encontre respostas para as dúvidas mais comuns.</p>
+    </div>
+    <div data-aos="fade-up" style="max-width: 800px; margin: 0 auto;">
+      <details style="margin-bottom: 16px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; cursor: pointer;">
+        <summary style="font-weight: 700; color: var(--text); display: flex; justify-content: space-between; align-items: center;">
+          Quanto tempo leva para carregar completamente? <span style="font-size: 20px; transition: transform 0.3s;">+</span>
+        </summary>
+        <p style="color: var(--muted); margin-top: 12px; line-height: 1.6;">O tempo de carga completa via painel solar varia de 8 a 12 horas, dependendo da intensidade da luz solar. Via carregador USB-C, leva aproximadamente 4 a 6 horas para uma carga completa.</p>
+      </details>
+      <details style="margin-bottom: 16px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; cursor: pointer;">
+        <summary style="font-weight: 700; color: var(--text); display: flex; justify-content: space-between; align-items: center;">
+          Funciona em dias nublados? <span style="font-size: 20px; transition: transform 0.3s;">+</span>
+        </summary>
+        <p style="color: var(--muted); margin-top: 12px; line-height: 1.6;">Sim, funciona em dias nublados, mas com eficiência reduzida. O painel solar consegue captar luz mesmo em condições de céu nublado, embora o carregamento seja mais lento.</p>
+      </details>
+      <details style="margin-bottom: 16px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; cursor: pointer;">
+        <summary style="font-weight: 700; color: var(--text); display: flex; justify-content: space-between; align-items: center;">
+          Qual é a capacidade de carga? <span style="font-size: 20px; transition: transform 0.3s;">+</span>
+        </summary>
+        <p style="color: var(--muted); margin-top: 12px; line-height: 1.6;">O carregador possui 20.000 mAh de capacidade, o que é suficiente para carregar um smartphone moderno de 4 a 5 vezes, dependendo da capacidade da bateria do dispositivo.</p>
+      </details>
+      <details style="margin-bottom: 16px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; cursor: pointer;">
+        <summary style="font-weight: 700; color: var(--text); display: flex; justify-content: space-between; align-items: center;">
+          Possui garantia? <span style="font-size: 20px; transition: transform 0.3s;">+</span>
+        </summary>
+        <p style="color: var(--muted); margin-top: 12px; line-height: 1.6;">Sim! Todos os nossos carregadores possuem garantia de 12 meses contra defeitos de fabricação. Oferecemos suporte técnico completo durante este período.</p>
+      </details>
+      <details style="margin-bottom: 16px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; cursor: pointer;">
+        <summary style="font-weight: 700; color: var(--text); display: flex; justify-content: space-between; align-items: center;">
+          Como é a entrega? <span style="font-size: 20px; transition: transform 0.3s;">+</span>
+        </summary>
+        <p style="color: var(--muted); margin-top: 12px; line-height: 1.6;">Oferecemos frete grátis para todo o Brasil via correios. O prazo de entrega varia de 5 a 15 dias úteis, dependendo da sua localização. Você receberá um código de rastreamento.</p>
+      </details>
+      <details style="padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; cursor: pointer;">
+        <summary style="font-weight: 700; color: var(--text); display: flex; justify-content: space-between; align-items: center;">
+          É seguro para usar com qualquer dispositivo? <span style="font-size: 20px; transition: transform 0.3s;">+</span>
+        </summary>
+        <p style="color: var(--muted); margin-top: 12px; line-height: 1.6;">Absolutamente! O carregador possui proteção contra sobrecarga, curto-circuito e sobrecorrente. É seguro para usar com smartphones, tablets, fones de ouvido e qualquer dispositivo com USB.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+</div> <!-- Fim aba-faq -->
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <span class="logo-text">Tech<span>Brasil</span></span>
+  </div>
+  <p>© 2026 Tech Brasil · Todos os direitos reservados</p>
+  <div class="footer-links">
+    <a href="#">Política de Privacidade</a>
+    <a href="#">Trocas e Devoluções</a>
+    <a href="https://wa.me/SEUNUMERO" target="_blank">Contato</a>
+  </div>
+</footer>
+
+</main>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({ once: true, duration: 700, easing: 'ease-out-cubic' });
+
+  // Inicializar partículas animadas
+  tsParticles.load('particles', {
+    particles: {
+      number: { value: 60, density: { enable: true, value_area: 800 } },
+      color: { value: '#0A84FF' },
+      shape: { type: 'circle' },
+      opacity: { value: 0.3, random: true },
+      size: { value: 3, random: true },
+      move: {
+        enable: true,
+        speed: 1,
+        random: true,
+        straight: false,
+        bounce: false
+      },
+      line_linked: {
+        enable: true,
+        distance: 150,
+        color: '#0A84FF',
+        opacity: 0.2,
+        width: 1
+      }
+    },
+    interactivity: {
+      detect_on: 'canvas',
+      events: {
+        onhover: { enable: true, mode: 'grab' },
+        onclick: { enable: true, mode: 'push' },
+        resize: true
+      },
+      modes: {
+        grab: { distance: 200, line_linked: { opacity: 0.5 } },
+        push: { particles_nb: 4 }
+      }
+    },
+    retina_detect: true
+  });
+
+  // Cronômetro de Oferta Relâmpago
+  function updateCountdown() {
+    const countdownElement = document.getElementById('countdown');
+    if (!countdownElement) return;
+
+    let hours = 0;
+    let minutes = 45;
+    let seconds = 12;
+
+    setInterval(() => {
+      if (seconds > 0) {
+        seconds--;
+      } else if (minutes > 0) {
+        minutes--;
+        seconds = 59;
+      } else if (hours > 0) {
+        hours--;
+        minutes = 59;
+        seconds = 59;
+      } else {
+        // Reinicia o cronômetro
+        hours = 0;
+        minutes = 45;
+        seconds = 12;
+      }
+
+      const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      countdownElement.textContent = formattedTime;
+    }, 1000);
+  }
+
+  updateCountdown();
+
+  // Botao Flutuante WhatsApp
+  const floatingBtn = document.createElement('a');
+  floatingBtn.href = 'https://wa.me/SEUNUMERO';
+  floatingBtn.target = '_blank';
+  floatingBtn.className = 'floating-btn';
+  floatingBtn.innerHTML = '💬';
+  floatingBtn.title = 'Fale conosco no WhatsApp';
+  document.body.appendChild(floatingBtn);
+
+  // Sistema de Abas
+  function showTab(tabName) {
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    const selectedTab = document.getElementById('tab-' + tabName);
+    if (selectedTab) {
+      selectedTab.classList.add('active');
+    }
+
+    if (event && event.target) {
+      event.target.classList.add('active');
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>
